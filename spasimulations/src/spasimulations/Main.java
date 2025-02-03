@@ -59,17 +59,22 @@ public class Main extends Application {
         edgeError.setLayoutY(180);
         // CHECK MANYA'S CODE
         addEdge.setOnAction(new EventHandler<ActionEvent>() {
-        @Override public void handle(ActionEvent e) {
-            if (!tnode1.getText().isEmpty() && !tnode2.getText().isEmpty() && !weight.getText().isEmpty()) {
-                Edge edge = graph.addEdge(tnode1.getText(), tnode2.getText(), weight.getText());
-                if (edge == null)
-                {
-                    edgeError.setText("Edge already created.");
-                    edgeError.setVisible(true);
+            @Override public void handle(ActionEvent e) {
+                if ((!tnode1.getText().isEmpty() && !tnode1.getText().isEmpty()) 
+                    && !weight.getText().isEmpty()) {
+                    Edge edge = graph.addEdge(tnode1.getText(), tnode2.getText(), weight.getText());
+                    if (edge == null)
+                    {
+                        edgeError.setText("Edge already created.");
+                        edgeError.setStyle("-fx-text-fill: red");
+                        edgeError.setVisible(true);
+                        return;
+                    }
+                    edgeError.setText("");
+                    pane.getChildren().add(0, edge.getLine());
+                    pane.getChildren().add(edge.getLabel());
                 }
-                pane.getChildren().add(0, edge.getLine());
             }
-        }
         });
         
         // this code drags the button
