@@ -1,5 +1,6 @@
 package spasimulations;
 
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -10,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.scene.shape.*;
-import javafx.scene.text.Text;  
+import java.lang.Math;
 
 /**
  * Write a description of JavaFX class Edge here.
@@ -23,19 +24,23 @@ public class Edge
     private Line line;
     private Node n1;
     private Node n2;
-    private int len;
-    private Text label;
+    private double len;
+    private Label weight;
     
-    public Edge(Node n1, Node n2, int len) {
+    public Edge(Node n1, Node n2, double len) {
         this.n1 = n1;
         this.n2 = n2;
         this.len = len; // LEN ADDED
-        label.setText(len);
+        weight = new Label(""+len);
         line = new Line();
         line.setStartX(n1.getX());
         line.setStartY(n1.getY());
-        line.setEndX(n2.getX() );
-        line.setEndY(n2.getY() );
+        line.setEndX(n2.getX());
+        line.setEndY(n2.getY());
+        weight.setLayoutX((n1.getX()+n2.getX())/2.0);
+        weight.setLayoutY((n1.getY()+n2.getY())/2.0);
+        weight.setStyle("-fx-background-color: yellow");
+        //weight.setText(""+len);
         
         //find some way to append instructions insteead of override/reset!!
         Button circ1 = n1.getCirc();
@@ -46,6 +51,12 @@ public class Edge
 
         line.endXProperty().bind( circ2.layoutXProperty().add( circ2.getBoundsInParent().getWidth() / 2.0));
         line.endYProperty().bind( circ2.layoutYProperty().add( circ2.getBoundsInParent().getHeight() / 2.0));
+        
+        //weight.layoutXProperty().bind(line.startXProperty().add(Math.abs(line.startXProperty().get()-line.endXProperty().get()) / 2.0));
+        weight.layoutXProperty().bind(line.startXProperty().add(line.endXProperty()).multiply(0.5));
+        weight.layoutYProperty().bind(line.startYProperty().add(line.endYProperty()).multiply(0.5));
+        //weight.layoutYProperty().bind(line.startYProperty().add(Math.abs(line.startYProperty().get()-line.endYProperty().get()) / 2.0));
+        //+line.endXProperty())/2.0
     }
     
     public Node getStart()
@@ -62,6 +73,10 @@ public class Edge
     {
         return line;
     }
+
+    public Label getLabel(){
+        return weight;
+    }
     
     public boolean equals(Edge edge)
     {
@@ -77,4 +92,5 @@ public class Edge
     {
         line.setStyle(line.getStyle() + "-fx-stroke: black;");
     }
+
 }
