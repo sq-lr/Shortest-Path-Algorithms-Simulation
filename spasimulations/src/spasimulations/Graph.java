@@ -1,4 +1,5 @@
 package spasimulations; 
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -10,7 +11,10 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javafx.util.Pair;
 import javafx.scene.layout.Pane;
+import java.util.*;
+
 
 /**
  * Write a description of JavaFX class Graph here.
@@ -38,19 +42,19 @@ public class Graph
         numToNode.put(n.getCirc().getText(), n);
         adjList.put(n, new ArrayList<Node>());
     }
-
-    public Edge addEdge(String n1, String n2, String w)
+    public Edge addEdge(String n1, String n2, String len)
     {
         Node node1 = numToNode.get(n1);
         Node node2 = numToNode.get(n2);
-        int len = Integer.parseInt(w);
-        Edge newEdge = new Edge(node1, node2, len);
+        Edge newEdge = new Edge(node1, node2, Double.valueOf(len));
         
-        /*if (edges.contains(newEdge))
+        for (Edge edge : edges)
         {
-            System.out.println("duplicate edge");
-            return null;
-        }*/
+            if (edge.equals(newEdge))
+            {
+                return null;
+            }
+        }
         
         adjList.get(node1).add(node2);
         edges.add(newEdge);
@@ -64,4 +68,34 @@ public class Graph
         numToNode.clear();
         Node.resetCounter();
     }
+    
+    
+    /*public int dijkstra(String dest)
+    {
+        Node destNode = numToNode.get(dest);
+        Node startNode = numToNode.get("1");
+        PriorityQueue<Pair<Integer, Node> > pq; 
+        pq.add(new Pair<Integer, Node>(0, startNode)); 
+        HashMap<Node, Integer> dis = new HashMap<Node, Integer>();
+        while(!pq.isEmpty())
+        {
+            int curDis = pq.peek().getKey();
+            Node curNode = pq.peek().getValue();
+            pq.poll();
+            if(dis.containsKey(curNode))
+                continue;
+            dis.put(curNode, curDis);
+            ArrayList<Pair<Integer, Node>> children = adjList.get(curNode);
+            // what the hell are you trying to do here
+            for(Pair<Integer, Node> child: children)
+            {
+                if(!dis.containsKey(curNode))
+                    pq.add(new Pair<Integer, Node>(curDis + child.getValue(), child.getKey()));
+            }
+        }
+        return dis.get(destNode);
+    }    */
+    
+    
+    
 }
