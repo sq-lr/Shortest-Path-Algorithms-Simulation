@@ -93,4 +93,8 @@ public class Edge
         line.setStyle(line.getStyle() + "-fx-stroke: black;");
     }
 
+    public double getLen()
+    {
+        return len;
+    }
 }

@@ -1,5 +1,6 @@
 package spasimulations; 
 
+import java.lang.classfile.components.ClassPrinter;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -14,6 +15,8 @@ import java.util.HashMap;
 import javafx.util.Pair;
 import javafx.scene.layout.Pane;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.lang.InterruptedException;
 
 
 /**
@@ -83,7 +86,7 @@ public class Graph
     }
     
     
-    public int dijkstra(String dest)
+    /*public int dijkstra(String dest)
     {
         Node destNode = numToNode.get(dest);
         Node startNode = numToNode.get("1");
@@ -107,5 +110,38 @@ public class Graph
             }
         }
         return dis.get(destNode);
-    }    
+    }*/
+    
+    public double bellmanFord(String dest)
+    {
+        int destNum = Integer.parseInt(dest);
+        for(int i = 0; i < Node.numNodes()-1; i++)
+        {
+            for(Edge e: edges)
+            {
+                e.highlight();
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch(InterruptedException exc) {
+                    System.out.println("got interrupted!");
+                }
+                Node start = e.getStart();
+                Node end = e.getEnd();
+                Double weight = e.getLen();
+                if(start.getDist() + weight < end.getDist())
+                {
+                    end.greenHighlight();
+                    end.setDist(start.getDist() + weight);
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch(InterruptedException exc) {
+                        System.out.println("got interrupted!");
+                    }
+                    end.noHighlight();
+                }
+                e.noHighlight();
+            }
+        }
+        return numToNode[destNum].getDist();
+    }
 }

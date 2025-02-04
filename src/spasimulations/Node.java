@@ -13,8 +13,8 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.scene.shape.*;
 import javafx.scene.control.Label;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.DoubleProperty;
 
 
 /**
@@ -27,7 +27,7 @@ public class Node
 {
     //ArrayList<Edge> edges = new ArrayList<Edge>();
     private Button circ;
-    private int dist;
+    private double dist;
     private final int inf = 10000;
     private static int counter = 1;
     private Label distLabel;
@@ -60,12 +60,15 @@ public class Node
 
          distLabel = new Label(String.valueOf(dist));
          distLabel.setStyle("-fx-background-color: aqua");
-         IntegerProperty distProperty = new SimpleIntegerProperty(dist);
-         distLabel.textProperty().bind(distProperty.asString());
          distLabel.layoutXProperty().bind(circ.layoutXProperty());
          distLabel.layoutYProperty().bind(circ.layoutYProperty().add(-20)); 
     }
     
+    public static int numNodes()
+    {  
+        return counter-1;
+    }
+
     public Button getCirc()
     {
         return circ;
@@ -109,5 +112,16 @@ public class Node
     public Label getLabel()
     {
         return distLabel;
+    }
+
+    public Double getDist()
+    {
+        return dist;
+    }
+
+    public void setDist(Double newDist)
+    {
+        dist = newDist;
+        distLabel.setText(String.valueOf(dist));
     }
 }

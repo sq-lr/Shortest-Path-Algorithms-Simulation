@@ -78,6 +78,20 @@ public class Main extends Application {
                 }
             }
         });
+
+        TextField destination = new TextField();
+        destination.setPromptText("Destination");
+        destination.setLayoutY(240);
+        //tnode1.setLayoutX(70);
+        destination.setPrefWidth(50);
+        Button bellmanFord = new Button("Bellman-Ford");
+        bellmanFord.setLayoutY(270);
+        bellmanFord.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                if(!destination.getText().isEmpty())
+                    graph.bellmanFord(destination.getText());
+            }
+        });
         
         // this code drags the button
         
@@ -88,6 +102,8 @@ public class Main extends Application {
         pane.getChildren().add(tnode2);
         pane.getChildren().add(weight);
         pane.getChildren().add(edgeError);
+        pane.getChildren().add(destination);
+        pane.getChildren().add(bellmanFord);
         
         
         Scene scene = new Scene(pane,500, 500);
