@@ -32,12 +32,13 @@ public class Main extends Application {
            Node n = new Node();
            graph.addNode(n);
            pane.getChildren().add(n.getCirc());
+           pane.getChildren().add(n.getLabel());
         }
         });
 
         Button addEdge = new Button("Add Edge");
         addEdge.setLayoutY(180);
-        
+
         TextField tnode1 = new TextField();
         tnode1.setPromptText("node 1");
         tnode1.setLayoutY(90);
@@ -54,9 +55,10 @@ public class Main extends Application {
         weight.setLayoutY(150);
         //weight.setLayoutX(70);
         weight.setPrefWidth(50);
-        Label edgeError = new Label();
+        Label edgeError = new Label("Edge already created.");
+        edgeError.setStyle("-fx-text-fill: red");
         edgeError.setVisible(false);
-        edgeError.setLayoutY(180);
+        edgeError.setLayoutY(210);
         // CHECK MANYA'S CODE
         addEdge.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -65,14 +67,14 @@ public class Main extends Application {
                     Edge edge = graph.addEdge(tnode1.getText(), tnode2.getText(), weight.getText());
                     if (edge == null)
                     {
-                        edgeError.setText("Edge already created.");
-                        edgeError.setStyle("-fx-text-fill: red");
                         edgeError.setVisible(true);
-                        return;
                     }
-                    edgeError.setText("");
-                    pane.getChildren().add(0, edge.getLine());
-                    pane.getChildren().add(edge.getLabel());
+                    else
+                    {
+                        edgeError.setVisible(false);
+                        pane.getChildren().add(0, edge.getLine());
+                        pane.getChildren().add(edge.getLabel());
+                    }
                 }
             }
         });
@@ -85,6 +87,7 @@ public class Main extends Application {
         pane.getChildren().add(tnode1);
         pane.getChildren().add(tnode2);
         pane.getChildren().add(weight);
+        pane.getChildren().add(edgeError);
         
         
         Scene scene = new Scene(pane,500, 500);

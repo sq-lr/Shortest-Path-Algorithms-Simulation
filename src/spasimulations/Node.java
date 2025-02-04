@@ -1,6 +1,8 @@
 package spasimulations;
 
 import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -10,6 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.scene.shape.*;
+import javafx.scene.control.Label;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.IntegerProperty;
 
 
 /**
@@ -22,9 +27,17 @@ public class Node
 {
     //ArrayList<Edge> edges = new ArrayList<Edge>();
     private Button circ;
+    private int dist;
+    private final int inf = 10000;
     private static int counter = 1;
+    private Label distLabel;
     
     public Node() {
+        if(counter == 1)
+            dist = 0;
+        else
+            dist = inf;
+
         circ = new Button("" + counter++);
         circ.setShape(new Circle(100));
         circ.setStyle(
@@ -44,6 +57,13 @@ public class Node
         circ.setLayoutX(e.getSceneX()-10);
         circ.setLayoutY(e.getSceneY()-10);
          });
+
+         distLabel = new Label(String.valueOf(dist));
+         distLabel.setStyle("-fx-background-color: aqua");
+         IntegerProperty distProperty = new SimpleIntegerProperty(dist);
+         distLabel.textProperty().bind(distProperty.asString());
+         distLabel.layoutXProperty().bind(circ.layoutXProperty());
+         distLabel.layoutYProperty().bind(circ.layoutYProperty().add(-20)); 
     }
     
     public Button getCirc()
@@ -79,5 +99,15 @@ public class Node
     public void noHighlight()
     {
         circ.setStyle(circ.getStyle() + "-fx-background-color: -fx-body-color;");
+    }
+
+    public int num()
+    {
+        return Integer.parseInt(circ.getText());
+    }
+
+    public Label getLabel()
+    {
+        return distLabel;
     }
 }

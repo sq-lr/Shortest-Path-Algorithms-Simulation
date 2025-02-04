@@ -26,26 +26,35 @@ public class Graph
 {
     private ArrayList<Node> nodes;
     private ArrayList<Edge> edges;
-    private HashMap<Node, ArrayList<Node> > adjList;
-    private HashMap<String, Node> numToNode;
+    private ArrayList<ArrayList<Integer> > adjList;
+    private HashMap<Pair<Integer, Integer>, Edge> pairToEdge;
+    private Node[] numToNode;
+    private final int maxNodes = 100000;
     
     public Graph()
     {
         nodes = new ArrayList<Node>();
         edges = new ArrayList<Edge>();
-        adjList = new HashMap<Node, ArrayList<Node> >();
-        numToNode = new HashMap<String, Node>();
+        adjList = new ArrayList<ArrayList<Integer> >();
+        for(int i = 0; i < maxNodes; i++)  {
+            adjList.add(new ArrayList<Integer>());
+        }
+        pairToEdge = new HashMap<Pair<Integer, Integer>, Edge>();
+        numToNode = new Node[maxNodes]; 
     }
+
     public void addNode(Node n)
     {
         nodes.add(n);
-        numToNode.put(n.getCirc().getText(), n);
-        adjList.put(n, new ArrayList<Node>());
+        numToNode[n.num()] = n;
     }
+
     public Edge addEdge(String n1, String n2, String len)
     {
-        Node node1 = numToNode.get(n1);
-        Node node2 = numToNode.get(n2);
+        int num1 = Integer.parseInt(n1);
+        int num2 = Integer.parseInt(n2);
+        Node node1 = numToNode[num1];
+        Node node2 = numToNode[num2];
         Edge newEdge = new Edge(node1, node2, Double.valueOf(len));
         
         for (Edge edge : edges)
@@ -55,22 +64,26 @@ public class Graph
                 return null;
             }
         }
-        
-        adjList.get(node1).add(node2);
+        adjList.get(num1).add(num2);
+        adjList.get(num2).add(num1);
         edges.add(newEdge);
+        pairToEdge.put(new Pair<Integer, Integer>(num1, num2), newEdge);
+        pairToEdge.put(new Pair<Integer, Integer>(num2, num1), newEdge);
         return newEdge;
     }
+
     public void reset()
     {
         nodes.clear();
         edges.clear();
-        adjList.clear();
-        numToNode.clear();
+        adjList = new ArrayList<ArrayList<Integer> >(maxNodes);
+        pairToEdge.clear();
+        numToNode = new Node[maxNodes];
         Node.resetCounter();
     }
     
     
-    /*public int dijkstra(String dest)
+    public int dijkstra(String dest)
     {
         Node destNode = numToNode.get(dest);
         Node startNode = numToNode.get("1");
@@ -94,8 +107,5 @@ public class Graph
             }
         }
         return dis.get(destNode);
-    }    */
-    
-    
-    
+    }    
 }
