@@ -54,9 +54,17 @@ public class Node
         circ.setLayoutY(0);
         
         circ.setOnMouseDragged(e -> {
-        circ.setLayoutX(e.getSceneX()-10);
-        circ.setLayoutY(e.getSceneY()-10);
-         });
+            circ.setLayoutX(e.getSceneX()-10);
+            circ.setLayoutY(e.getSceneY()-10);
+        });
+        circ.setOnMouseReleased(e-> {
+            if (circ.getLayoutX() < 0) {
+                circ.setLayoutX(0);
+            }
+            if (circ.getLayoutY() < 0) {
+                circ.setLayoutY(0);
+            }
+        });
 
          distLabel = new Label(String.valueOf(dist));
          distLabel.setStyle("-fx-background-color: aqua");
@@ -124,4 +132,5 @@ public class Node
         dist = newDist;
         distLabel.setText(String.valueOf(dist));
     }
+}
 }

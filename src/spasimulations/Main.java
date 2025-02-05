@@ -106,7 +106,7 @@ public class Main extends Application {
         pane.getChildren().add(bellmanFord);
         
         
-        Scene scene = new Scene(pane,500, 500);
+        Scene scene = new Scene(pane,700, 600);
         primaryStage.setTitle("draggin these   buttons");
         primaryStage.setScene(scene);
         primaryStage.show();
