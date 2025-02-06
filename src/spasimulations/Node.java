@@ -51,7 +51,7 @@ public class Node
             //"-fx-padding: 0px;"
         );
         circ.setLayoutX(80+counter*10);
-        circ.setLayoutY(0);
+        circ.setLayoutY(20);
         
         circ.setOnMouseDragged(e -> {
             circ.setLayoutX(e.getSceneX()-10);
@@ -129,7 +129,7 @@ public class Node
 
     public void setDistLabel(Double newDist)
     {
-        distLabel.setText(String.valueOf(dist));
+        distLabel.setText(String.valueOf(newDist));
     }
 
     public void setDist(Double newDist)
