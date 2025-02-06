@@ -99,7 +99,7 @@ public class Node
 
     public void greenHighlight()
     {
-        circ.setStyle(circ.getStyle() + "fx-background-color: green;");
+        circ.setStyle(circ.getStyle() + "-fx-background-color: lightgreen;");
     }
 
     public void redHighlight()
@@ -127,10 +127,14 @@ public class Node
         return dist;
     }
 
+    public void setDistLabel(Double newDist)
+    {
+        distLabel.setText(String.valueOf(dist));
+    }
+
     public void setDist(Double newDist)
     {
         dist = newDist;
-        distLabel.setText(String.valueOf(dist));
     }
 }
-}
+

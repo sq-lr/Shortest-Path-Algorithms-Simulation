@@ -1,7 +1,10 @@
 package spasimulations; 
 
 import java.lang.classfile.components.ClassPrinter;
+
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -16,7 +19,11 @@ import javafx.util.Pair;
 import javafx.scene.layout.Pane;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.lang.InterruptedException;
+
+import javafx.application.Platform;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 
 /**
@@ -71,7 +78,6 @@ public class Graph
         adjList.get(num2).add(num1);
         edges.add(newEdge);
         pairToEdge.put(new Pair<Integer, Integer>(num1, num2), newEdge);
-        pairToEdge.put(new Pair<Integer, Integer>(num2, num1), newEdge);
         return newEdge;
     }
 
@@ -112,36 +118,47 @@ public class Graph
         return dis.get(destNode);
     }*/
     
-    public double bellmanFord(String dest)
-    {
+    public double bellmanFord(String dest) {
         int destNum = Integer.parseInt(dest);
-        for(int i = 0; i < Node.numNodes()-1; i++)
-        {
-            for(Edge e: edges)
-            {
-                e.highlight();
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch(InterruptedException exc) {
-                    System.out.println("got interrupted!");
-                }
+        Timeline timeline = new Timeline();
+        double delay = 0; // Start time delay
+    
+        for (int i = 0; i < Node.numNodes() - 1; i++) {
+            for (Edge e : edges) {
                 Node start = e.getStart();
                 Node end = e.getEnd();
-                Double weight = e.getLen();
-                if(start.getDist() + weight < end.getDist())
-                {
-                    end.greenHighlight();
-                    end.setDist(start.getDist() + weight);
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch(InterruptedException exc) {
-                        System.out.println("got interrupted!");
-                    }
-                    end.noHighlight();
+                double weight = e.getLen();
+    
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.highlight()));
+                delay += 1000; 
+                if (start.getDist() + weight < end.getDist()) {
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> end.greenHighlight()));
+                    delay += 1000;
+    
+                    double finalDist = (double) (start.getDist() + weight);
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> end.setDistLabel(finalDist)));
+                    end.setDist(finalDist);
+    
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> end.noHighlight()));
+                    delay += 1000;
                 }
-                e.noHighlight();
+
+                if (end.getDist() + weight < start.getDist()) {
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> start.greenHighlight()));
+                    delay += 1000;
+    
+                    double finalDist = (double) (end.getDist() + weight);
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> start.setDistLabel(finalDist)));
+                    start.setDist(finalDist);
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> start.noHighlight()));
+
+                    delay += 1000;
+                }
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.noHighlight()));
+                delay += 1000;
             }
         }
+        timeline.play();
         return numToNode[destNum].getDist();
     }
 }
