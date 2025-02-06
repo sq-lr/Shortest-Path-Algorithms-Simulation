@@ -51,7 +51,7 @@ public class Node
             //"-fx-padding: 0px;"
         );
         circ.setLayoutX(80+counter*10);
-        circ.setLayoutY(0);
+        circ.setLayoutY(20);
         
         circ.setOnMouseDragged(e -> {
             circ.setLayoutX(e.getSceneX()-10);
@@ -99,7 +99,7 @@ public class Node
 
     public void greenHighlight()
     {
-        circ.setStyle(circ.getStyle() + "fx-background-color: green;");
+        circ.setStyle(circ.getStyle() + "-fx-background-color: lightgreen;");
     }
 
     public void redHighlight()
@@ -127,10 +127,14 @@ public class Node
         return dist;
     }
 
+    public void setDistLabel(Double newDist)
+    {
+        distLabel.setText(String.valueOf(newDist));
+    }
+
     public void setDist(Double newDist)
     {
         dist = newDist;
-        distLabel.setText(String.valueOf(dist));
     }
 }
-}
+

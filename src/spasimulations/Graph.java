@@ -1,7 +1,10 @@
 package spasimulations; 
 
 import java.lang.classfile.components.ClassPrinter;
+
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -10,13 +13,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import java.util.ArrayList;
-import java.util.HashMap;
 import javafx.util.Pair;
 import javafx.scene.layout.Pane;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.lang.InterruptedException;
+
+import javafx.application.Platform;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 
 /**
@@ -86,62 +91,79 @@ public class Graph
     }
     
     
-    /*public int dijkstra(String dest)
+    public double dijkstra(String dest)
     {
-        Node destNode = numToNode.get(dest);
-        Node startNode = numToNode.get("1");
-        PriorityQueue<Pair<Integer, Node> > pq; 
-        pq.add(new Pair<Integer, Node>(0, startNode)); 
-        HashMap<Node, Integer> dis = new HashMap<Node, Integer>();
+        PriorityQueue<Pair<Double, Integer> > pq = new PriorityQueue<Pair<Double, Integer> >(Comparator.comparing(Pair::getKey)); 
+        pq.add(new Pair<Double, Integer>(0.0, 1)); 
+        boolean[] vis = new boolean[nodes.size()+1];
         while(!pq.isEmpty())
         {
-            int curDis = pq.peek().getKey();
-            Node curNode = pq.peek().getValue();
+            double curDis = pq.peek().getKey();
+            int curNode = pq.peek().getValue();
             pq.poll();
-            if(dis.containsKey(curNode))
+            if(vis[curNode])
                 continue;
-            dis.put(curNode, curDis);
-            ArrayList<Pair<Integer, Node>> children = adjList.get(curNode);
-            // what the hell are you trying to do here
-            for(Pair<Integer, Node> child: children)
+            vis[curNode] = true;
+            numToNode[curNode].setDist(curDis);
+            ArrayList<Integer> children = adjList.get(curNode);
+            for(int c: children)
             {
-                if(!dis.containsKey(curNode))
-                    pq.add(new Pair<Integer, Node>(curDis + child.getValue(), child.getKey()));
+                if(!vis[c])
+                {
+                    double newDis = curDis + pairToEdge.get(new Pair<Integer, Integer>(curNode, c)).getLen();
+                    pq.add(new Pair<Double, Integer>(newDis, c) );
+                }
             }
         }
-        return dis.get(destNode);
-    }*/
+        return numToNode[Integer.parseInt(dest)].getDist();
+    }
     
-    public double bellmanFord(String dest)
-    {
+    public double bellmanFord(String dest, Label inProgress) {
         int destNum = Integer.parseInt(dest);
-        for(int i = 0; i < Node.numNodes()-1; i++)
-        {
-            for(Edge e: edges)
-            {
-                e.highlight();
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch(InterruptedException exc) {
-                    System.out.println("got interrupted!");
-                }
+        Timeline timeline = new Timeline();
+        double delay = 0; // Start time delay
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(true)));
+    
+        for (int i = 0; i < Node.numNodes() - 1; i++) {
+            for (Edge e : edges) {
                 Node start = e.getStart();
                 Node end = e.getEnd();
-                Double weight = e.getLen();
-                if(start.getDist() + weight < end.getDist())
-                {
-                    end.greenHighlight();
-                    end.setDist(start.getDist() + weight);
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch(InterruptedException exc) {
-                        System.out.println("got interrupted!");
-                    }
-                    end.noHighlight();
+                double weight = e.getLen();
+    
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.highlight()));
+                delay += 500; 
+                if (start.getDist() + weight < end.getDist()) {
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> end.greenHighlight()));
+                    delay += 500;
+    
+                    double finalDist = (double) (start.getDist() + weight);
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), Double.toString(finalDist), event -> end.setDistLabel(finalDist)));
+                    delay += 500;
+
+                    end.setDist(finalDist);
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> end.noHighlight()));
+                    delay += 500;
                 }
-                e.noHighlight();
+
+                if (end.getDist() + weight < start.getDist()) {
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> start.greenHighlight()));
+                    delay += 500;
+    
+                    double finalDist = (double) (end.getDist() + weight);
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), Double.toString(finalDist), event -> start.setDistLabel(finalDist)));
+                    delay += 500;
+
+                    start.setDist(finalDist);
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> start.noHighlight()));
+
+                    delay += 500;
+                }
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.noHighlight()));
+                delay += 500;
             }
         }
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(false)));
+        timeline.play();
         return numToNode[destNum].getDist();
     }
 }

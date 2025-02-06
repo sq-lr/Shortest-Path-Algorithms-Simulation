@@ -78,6 +78,9 @@ public class Main extends Application {
                 }
             }
         });
+        Label inProgress = new Label("Simulation running!");
+        inProgress.setLayoutY(310);
+        inProgress.setVisible(false);
 
         TextField destination = new TextField();
         destination.setPromptText("Destination");
@@ -89,10 +92,20 @@ public class Main extends Application {
         bellmanFord.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 if(!destination.getText().isEmpty())
-                    graph.bellmanFord(destination.getText());
+                    graph.bellmanFord(destination.getText(), inProgress);
+            }
+        });
+        Button dijkstra = new Button("Dijkstra");
+        dijkstra.setLayoutY(330);
+        dijkstra.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                if(!destination.getText().isEmpty())
+                    System.out.println(graph.dijkstra(destination.getText()));
             }
         });
         
+        
+
         // this code drags the button
         
         // button added to pane and pane added to scene
@@ -104,7 +117,8 @@ public class Main extends Application {
         pane.getChildren().add(edgeError);
         pane.getChildren().add(destination);
         pane.getChildren().add(bellmanFord);
-        
+        pane.getChildren().add(inProgress);
+        pane.getChildren().add(dijkstra);
         
         Scene scene = new Scene(pane,700, 600);
         primaryStage.setTitle("draggin these   buttons");
