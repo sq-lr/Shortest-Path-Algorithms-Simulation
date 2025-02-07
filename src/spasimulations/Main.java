@@ -130,7 +130,7 @@ public class Main extends Application
                 }
             }
         });
-        
+
         Rectangle fwOutput = new Rectangle();
         fwOutput.setWidth(120);
         fwOutput.setHeight(150);
@@ -208,8 +208,6 @@ public class Main extends Application
         Scene scene = new Scene(pane, 700, 600);
         primaryStage.setTitle("draggin these   buttons");
         primaryStage.setScene(scene);
-        primaryStage.show();
-
         primaryStage.show();
     }
 
