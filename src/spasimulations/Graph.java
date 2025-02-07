@@ -227,8 +227,40 @@ public class Graph
         return arr[1][destNum];
     }
 
-    public void dfs(int node, int value, int delay)
+    public int dfs(int node, double dist, int delay, boolean[] vis, Timeline timeline)
     {
+        if(dist > numToNode[node].getDist())
+        {
+            return delay;
+        }
+        vis[node] = true;
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[node].greenHighlight()));
+        delay += 500;
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[node].setDistLabel(dist)));
+        delay += 500;
+        numToNode[node].setDist(dist);
+        ArrayList<Integer> children = adjList.get(node);
+        for(int c: children)
+        {
+            if(!vis[c])
+            {
+                Edge e = pairToEdge.get(new Pair<Integer, Integer>(node, c));
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.highlight()));
+                delay += 500;
+                double newDist = dist + e.getLen();
+                delay = dfs(c, newDist, delay + 500, vis, timeline);
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.noHighlight()));
+                delay += 500;
+            }
+        }
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[node].noHighlight()));
+        delay += 500;
+        vis[node] = false;
+        return delay;
+    }
 
+    public int getSize()
+    {
+        return nodes.size();
     }
 }

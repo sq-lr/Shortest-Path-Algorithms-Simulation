@@ -12,6 +12,9 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.event.EventHandler;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 public class Main extends Application {
 
@@ -113,6 +116,20 @@ public class Main extends Application {
             }
         });
 
+        Button dfs = new Button("Depth First Search");
+        dfs.setLayoutY(360);
+        dfs.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                if(!destination.getText().isEmpty())
+                {
+                    Timeline timeline = new Timeline();
+                    boolean vis[] = new boolean[graph.getSize()+1];
+                    graph.dfs(1, 0.0, 0, vis, timeline);
+                    timeline.play();
+                }
+            }
+        });
+
         // this code drags the button
         
         // button added to pane and pane added to scene
@@ -127,6 +144,7 @@ public class Main extends Application {
         pane.getChildren().add(inProgress);
         pane.getChildren().add(dijkstra);
         pane.getChildren().add(floydWarshall);
+        pane.getChildren().add(dfs);
         
         Scene scene = new Scene(pane,700, 600);
         primaryStage.setTitle("draggin these   buttons");
