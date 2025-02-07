@@ -102,9 +102,9 @@ public class Node
         circ.setStyle(circ.getStyle() + "-fx-background-color: lightgreen;");
     }
 
-    public void redHighlight()
+    public void yellowHighlight()
     {
-        circ.setStyle(circ.getStyle() + "-fx-background-color: red;");
+        circ.setStyle(circ.getStyle() + "-fx-background-color: lightgoldenrodyellow;");
     }
 
     public void noHighlight()

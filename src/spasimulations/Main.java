@@ -96,15 +96,22 @@ public class Main extends Application {
             }
         });
         Button dijkstra = new Button("Dijkstra");
-        dijkstra.setLayoutY(330);
+        dijkstra.setLayoutY(300);
         dijkstra.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 if(!destination.getText().isEmpty())
-                    System.out.println(graph.dijkstra(destination.getText()));
+                    graph.dijkstra(destination.getText());
             }
         });
         
-        
+        Button floydWarshall = new Button("Floyd-Warshall");
+        floydWarshall.setLayoutY(330);
+        floydWarshall.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                if(!destination.getText().isEmpty())
+                    System.out.println(graph.floydWarshall(destination.getText()));
+            }
+        });
 
         // this code drags the button
         
@@ -119,16 +126,13 @@ public class Main extends Application {
         pane.getChildren().add(bellmanFord);
         pane.getChildren().add(inProgress);
         pane.getChildren().add(dijkstra);
+        pane.getChildren().add(floydWarshall);
         
         Scene scene = new Scene(pane,700, 600);
         primaryStage.setTitle("draggin these   buttons");
         primaryStage.setScene(scene);
         primaryStage.show();
-
-        primaryStage.show();
     }
-
-
     public static void main(String[] args) {
         launch(args);
     }
