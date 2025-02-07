@@ -23,7 +23,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 
-
 /**
  * Write a description of JavaFX class Graph here.
  *
@@ -90,9 +89,10 @@ public class Graph
         Node.resetCounter();
     }
     
-    
     public double dijkstra(String dest)
     {
+        Timeline timeline = new Timeline();
+        double delay = 0;
         PriorityQueue<Pair<Double, Integer> > pq = new PriorityQueue<Pair<Double, Integer> >(Comparator.comparing(Pair::getKey)); 
         pq.add(new Pair<Double, Integer>(0.0, 1)); 
         boolean[] vis = new boolean[nodes.size()+1];
@@ -103,25 +103,44 @@ public class Graph
             pq.poll();
             if(vis[curNode])
                 continue;
+            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[curNode].greenHighlight()));
+            delay += 500;
             vis[curNode] = true;
-            numToNode[curNode].setDist(curDis);
             ArrayList<Integer> children = adjList.get(curNode);
             for(int c: children)
             {
-                if(!vis[c])
+                Edge e = pairToEdge.get(new Pair<Integer, Integer>(curNode, c));
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.highlight()));
+                delay += 500;
+                double newDis = curDis + e.getLen();
+                if(!vis[c] && newDis < numToNode[c].getDist())
                 {
-                    double newDis = curDis + pairToEdge.get(new Pair<Integer, Integer>(curNode, c)).getLen();
-                    pq.add(new Pair<Double, Integer>(newDis, c) );
+                    /*System.out.println(c);
+                    System.out.println(numToNode[c].getDist());
+                    System.out.println(newDis); */
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[c].yellowHighlight()));
+                    delay += 500;
+                    numToNode[c].setDist(newDis);
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[c].setDistLabel(newDis)));
+                    delay += 500;
+                    pq.add(new Pair<Double, Integer>(newDis, c));
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[c].noHighlight()));
+                    delay += 500;
                 }
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.noHighlight()));
+                delay += 500;
             }
+            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[curNode].noHighlight()));
+            delay += 500;
         }
+        timeline.play();
         return numToNode[Integer.parseInt(dest)].getDist();
     }
     
     public double bellmanFord(String dest, Label inProgress) {
         int destNum = Integer.parseInt(dest);
         Timeline timeline = new Timeline();
-        double delay = 0; // Start time delay
+        double delay = 0;
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(true)));
     
         for (int i = 0; i < Node.numNodes() - 1; i++) {
@@ -165,5 +184,51 @@ public class Graph
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(false)));
         timeline.play();
         return numToNode[destNum].getDist();
+    }
+
+    public double floydWarshall(String dest)
+    {
+        int destNum = Integer.parseInt(dest);
+        int n = nodes.size();
+        double arr[][] = new double[n+1][n+1];
+        double inf = 10000;
+        for(int i = 1; i <= n; i++)
+        {
+            for(int j = 1; j <= n; j++)
+            {
+                if(i == j)
+                    arr[i][j] = 0;
+                arr[i][j] = inf;
+            }
+        }
+        for(Edge e: edges)
+        {
+            arr[e.getStart().num()][e.getEnd().num()] = e.getLen();
+            arr[e.getEnd().num()][e.getStart().num()] = e.getLen();
+        }
+        for(int i = 1; i <= n; i++)
+        {
+            for(int j = 1; j <= n; j++)
+            {
+                for(int k = 1; k <= n; k++)
+                {
+                    double newDis = arr[i][j] + arr[j][k];
+                    if(newDis < arr[i][k])
+                    {
+                        arr[i][k] = newDis;
+                    }
+                }
+            }
+        }
+        for(int i = 1; i <= n; i++)
+        {
+            numToNode[i].setDistLabel(arr[1][i]);
+        }
+        return arr[1][destNum];
+    }
+
+    public void dfs(int node, int value, int delay)
+    {
+
     }
 }
