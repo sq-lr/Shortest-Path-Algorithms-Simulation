@@ -12,20 +12,22 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.event.EventHandler;
+import javafx.scene.shape.*;
+import javafx.scene.paint.Color;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 
-public class Main extends Application {
-
+public class Main extends Application
+{
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception
+    {
         Parent root = FXMLLoader.load(getClass().getResource("spasimulations.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 400, 300));
         
         Graph graph = new Graph();
-        
         Pane pane = new Pane();
         
         Button addNode = new Button("Add Node");
@@ -58,11 +60,11 @@ public class Main extends Application {
         weight.setLayoutY(150);
         //weight.setLayoutX(70);
         weight.setPrefWidth(50);
-        Label edgeError = new Label("Edge already created.");
+        Label edgeError = new Label("Invalid/existing edge.");
         edgeError.setStyle("-fx-text-fill: red");
         edgeError.setVisible(false);
         edgeError.setLayoutY(210);
-        // CHECK MANYA'S CODE
+        
         addEdge.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 if ((!tnode1.getText().isEmpty() && !tnode1.getText().isEmpty()) 
@@ -81,8 +83,10 @@ public class Main extends Application {
                 }
             }
         });
+        
         Label inProgress = new Label("Simulation running!");
-        inProgress.setLayoutY(310);
+        inProgress.setLayoutY(390);
+        inProgress.setStyle("-fx-text-fill: red");
         inProgress.setVisible(false);
 
         TextField destination = new TextField();
@@ -90,6 +94,7 @@ public class Main extends Application {
         destination.setLayoutY(240);
         //tnode1.setLayoutX(70);
         destination.setPrefWidth(50);
+        
         Button bellmanFord = new Button("Bellman-Ford");
         bellmanFord.setLayoutY(270);
         bellmanFord.setOnAction(new EventHandler<ActionEvent>() {
@@ -98,25 +103,42 @@ public class Main extends Application {
                     graph.bellmanFord(destination.getText(), inProgress);
             }
         });
+        
         Button dijkstra = new Button("Dijkstra");
         dijkstra.setLayoutY(300);
         dijkstra.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 if(!destination.getText().isEmpty())
-                    graph.dijkstra(destination.getText());
+                    graph.dijkstra(destination.getText(), inProgress);
             }
         });
+        
+        Label flwsOut = new Label();
+        flwsOut.setVisible(false);
+        flwsOut.setLayoutY(430);
+        flwsOut.setLayoutX(10);
         
         Button floydWarshall = new Button("Floyd-Warshall");
         floydWarshall.setLayoutY(330);
         floydWarshall.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 if(!destination.getText().isEmpty())
+                {
+                    flwsOut.setText(""+graph.floydWarshall(destination.getText()));
+                    flwsOut.setVisible(true);
                     System.out.println(graph.floydWarshall(destination.getText()));
+                }
             }
         });
 
-        Button dfs = new Button("Depth First Search");
+        Rectangle fwOutput = new Rectangle();
+        fwOutput.setWidth(120);
+        fwOutput.setHeight(150);
+        fwOutput.setX(5);
+        fwOutput.setY(420);
+        fwOutput.setFill(Color.rgb(200, 200, 200));
+        
+        Button dfs = new Button("Depth-First Search");
         dfs.setLayoutY(360);
         dfs.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -129,8 +151,41 @@ public class Main extends Application {
                 }
             }
         });
-
-        // this code drags the button
+        
+        Button reset = new Button("Reset Distances");
+        reset.setLayoutX(550);
+        reset.setLayoutY(470);
+        reset.setOnAction(new EventHandler<ActionEvent>() {
+        @Override public void handle(ActionEvent e) {
+            graph.resetDists();
+        }
+        });
+        
+        Button clear = new Button("Clear Graph");
+        clear.setLayoutX(550);
+        clear.setLayoutY(500);
+        clear.setOnAction(new EventHandler<ActionEvent>() {
+        @Override public void handle(ActionEvent e) {
+            graph.reset();
+            pane.getChildren().clear();
+            pane.getChildren().add(addNode);
+            pane.getChildren().add(addEdge);
+            pane.getChildren().add(tnode1);
+            pane.getChildren().add(tnode2);
+            pane.getChildren().add(weight);
+            pane.getChildren().add(reset);
+            pane.getChildren().add(clear);
+            pane.getChildren().add(edgeError);
+            pane.getChildren().add(destination);
+            pane.getChildren().add(bellmanFord);
+            pane.getChildren().add(inProgress);
+            pane.getChildren().add(dijkstra);
+            pane.getChildren().add(floydWarshall);
+            pane.getChildren().add(fwOutput);
+            pane.getChildren().add(flwsOut);
+            pane.getChildren().add(dfs);
+        }
+        });
         
         // button added to pane and pane added to scene
         pane.getChildren().add(addNode);
@@ -138,19 +193,25 @@ public class Main extends Application {
         pane.getChildren().add(tnode1);
         pane.getChildren().add(tnode2);
         pane.getChildren().add(weight);
+        pane.getChildren().add(reset);
+        pane.getChildren().add(clear);
         pane.getChildren().add(edgeError);
         pane.getChildren().add(destination);
         pane.getChildren().add(bellmanFord);
         pane.getChildren().add(inProgress);
         pane.getChildren().add(dijkstra);
         pane.getChildren().add(floydWarshall);
+        pane.getChildren().add(fwOutput);
+        pane.getChildren().add(flwsOut);
         pane.getChildren().add(dfs);
         
-        Scene scene = new Scene(pane,700, 600);
+        Scene scene = new Scene(pane, 700, 600);
         primaryStage.setTitle("draggin these   buttons");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+
     public static void main(String[] args) {
         launch(args);
     }
