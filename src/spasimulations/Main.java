@@ -14,6 +14,9 @@ import javafx.scene.layout.StackPane;
 import javafx.event.EventHandler;
 import javafx.scene.shape.*;
 import javafx.scene.paint.Color;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 public class Main extends Application
 {
@@ -135,16 +138,19 @@ public class Main extends Application
         fwOutput.setY(420);
         fwOutput.setFill(Color.rgb(200, 200, 200));
         
-        Button dfs = new Button("DFS");
+        Button dfs = new Button("Depth-First Search");
         dfs.setLayoutY(360);
-        /*
         dfs.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 if(!destination.getText().isEmpty())
-                    graph.dfs(destination.getText()));
+                {
+                    Timeline timeline = new Timeline();
+                    boolean vis[] = new boolean[graph.getSize()+1];
+                    graph.dfs(1, 0.0, 0, vis, timeline);
+                    timeline.play();
+                }
             }
         });
-        */
         
         Button reset = new Button("Reset Distances");
         reset.setLayoutX(550);
