@@ -136,5 +136,18 @@ public class Node
     {
         dist = newDist;
     }
+
+    public void resetDist()
+    {
+        if (num() == 1)
+        {
+            dist = 0;
+        }
+        else
+        {
+            dist = INF;
+        }
+        setDistLabel(dist);
+    }
 }
 
