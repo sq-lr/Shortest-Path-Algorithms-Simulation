@@ -145,7 +145,7 @@ public class Node
         }
         else
         {
-            dist = INF;
+            dist = inf;
         }
         setDistLabel(dist);
     }

@@ -217,6 +217,9 @@ public class Graph
         int n = nodes.size();
         double arr[][] = new double[n+1][n+1];
         double inf = 10000;
+        Timeline timeline = new Timeline();
+        int delay = 0;
+
         for(int i = 1; i <= n; i++)
         {
             for(int j = 1; j <= n; j++)
@@ -229,34 +232,65 @@ public class Graph
         }
         for(Edge e: edges)
         {
-            arr[e.getStart().num()][e.getEnd().num()] = e.getLen();
-            arr[e.getEnd().num()][e.getStart().num()] = e.getLen();
+            int start = e.getStart().num();
+            int end = e.getEnd().num();
+            arr[start][end] = e.getLen();
+            arr[end][start] = e.getLen();
+            if(start == 1)
+            {
+                numToNode[end].setDistLabel(e.getLen());
+            }
+            if(end == 1)
+            {
+                numToNode[start].setDistLabel(e.getLen());
+            }
         }
+        
         for(int i = 1; i <= n; i++)
         {
+            final int fi = i;
+            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[fi].greenHighlight()));
+            delay += 500;
             for(int j = 1; j <= n; j++)
             {
+                if(j == i)
+                    continue;
+                final int fj = j;
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[fj].yellowHighlight()));
+                delay += 500;
                 for(int k = 1; k <= n; k++)
                 {
+                    if(k == i || k == j)
+                        continue;
+                    final int fk = k;
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[fk].greenHighlight()));
+                    delay += 500;
                     double newDis = arr[i][j] + arr[j][k];
                     if(newDis < arr[i][k])
                     {
                         arr[i][k] = newDis;
                         arr[k][i] = newDis;
+                        if(i == 1)
+                        {
+                            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[fk].setDistLabel(newDis)));
+                            delay += 500;
+                        }
+                        if(k == 1)
+                        {
+                            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[fi].setDistLabel(newDis)));
+                            delay += 500;
+                        }
                     }
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[fk].noHighlight()));
+                    delay += 500;
                 }
+                timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[fj].noHighlight()));
+                delay += 500;
             }
+            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[fi].noHighlight()));
+            delay += 500;
         }
-        for(int i = 1; i <= n; i++)
-        {
-            numToNode[i].setDistLabel(arr[1][i]);
-        }
-        for(int i = 1; i <= n; i++)
-        {
-            for(int j = 1; j <= n; j++)
-                System.out.print(arr[i][j] + " ");
-            System.out.println();
-        }
+        timeline.play();
         return arr[1][destNum];
     }
 
