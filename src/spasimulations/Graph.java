@@ -211,15 +211,15 @@ public class Graph
         return numToNode[destNum].getDist();
     }
 
-    public double floydWarshall(String dest)
+    public double floydWarshall(String dest, Label inProgress)
     {
         int destNum = Integer.parseInt(dest);
         int n = nodes.size();
         double arr[][] = new double[n+1][n+1];
         double inf = 10000;
         Timeline timeline = new Timeline();
-        int delay = 0;
-
+        double delay=0;
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(true)));
         for(int i = 1; i <= n; i++)
         {
             for(int j = 1; j <= n; j++)
@@ -290,12 +290,14 @@ public class Graph
             timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[fi].noHighlight()));
             delay += 500;
         }
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(false)));
         timeline.play();
         return arr[1][destNum];
     }
 
-    public int dfs(int node, double dist, int delay, boolean[] vis, Timeline timeline)
+    public int dfs(int node, double dist, int delay, boolean[] vis, Timeline timeline, Label inProgress)
     {
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(true)));
         if(dist > numToNode[node].getDist())
         {
             return delay;
@@ -315,7 +317,7 @@ public class Graph
                 timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.highlight()));
                 delay += 500;
                 double newDist = dist + e.getLen();
-                delay = dfs(c, newDist, delay + 500, vis, timeline);
+                delay = dfs(c, newDist, delay + 500, vis, timeline, inProgress);
                 timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> e.noHighlight()));
                 delay += 500;
             }
@@ -323,6 +325,8 @@ public class Graph
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[node].noHighlight()));
         delay += 500;
         vis[node] = false;
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(false)));
+        timeline.play();
         return delay;
     }
 
