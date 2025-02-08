@@ -1,3 +1,5 @@
+package spasimulations;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -221,7 +223,8 @@ public class Graph
             {
                 if(i == j)
                     arr[i][j] = 0;
-                arr[i][j] = inf;
+                else
+                    arr[i][j] = inf;
             }
         }
         for(Edge e: edges)
@@ -239,6 +242,7 @@ public class Graph
                     if(newDis < arr[i][k])
                     {
                         arr[i][k] = newDis;
+                        arr[k][i] = newDis;
                     }
                 }
             }
@@ -246,6 +250,12 @@ public class Graph
         for(int i = 1; i <= n; i++)
         {
             numToNode[i].setDistLabel(arr[1][i]);
+        }
+        for(int i = 1; i <= n; i++)
+        {
+            for(int j = 1; j <= n; j++)
+                System.out.print(arr[i][j] + " ");
+            System.out.println();
         }
         return arr[1][destNum];
     }
