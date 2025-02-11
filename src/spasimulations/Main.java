@@ -70,16 +70,23 @@ public class Main extends Application {
             @Override public void handle(ActionEvent e) {
                 if ((!tnode1.getText().isEmpty() && !tnode1.getText().isEmpty()) 
                     && !weight.getText().isEmpty()) {
-                    Edge edge = graph.addEdge(tnode1.getText(), tnode2.getText(), weight.getText());
-                    if (edge == null)
+                    if (Double.parseDouble(weight.getText()) < 0)
                     {
                         edgeError.setVisible(true);
                     }
                     else
                     {
-                        edgeError.setVisible(false);
-                        pane.getChildren().add(0, edge.getLine());
-                        pane.getChildren().add(edge.getLabel());
+                        Edge edge = graph.addEdge(tnode1.getText(), tnode2.getText(), weight.getText());
+                        if (Double.parseDouble(weight.getText()) < 0 || edge == null)
+                        {
+                            edgeError.setVisible(true);
+                        }
+                        else
+                        {
+                            edgeError.setVisible(false);
+                            pane.getChildren().add(0, edge.getLine());
+                            pane.getChildren().add(edge.getLabel());
+                        }
                     }
                 }
             }
@@ -147,7 +154,7 @@ public class Main extends Application {
                 }
             }
         });
-        Rectangle timeComplexity = new Rectangle();
+        /* Rectangle timeComplexity = new Rectangle();
         timeComplexity.setWidth(120);
         timeComplexity.setHeight(150);
         timeComplexity.setX(570);
@@ -155,7 +162,7 @@ public class Main extends Application {
         timeComplexity.setFill(Color.rgb(220, 220, 220));        
         Label tComp = new Label("TIME COMPLEXITY \n\nAlgorithm:_ \nTime(ms):_ \nTime complexity:_");
         tComp.setLayoutX(575);
-        tComp.setLayoutY(15);
+        tComp.setLayoutY(15);*/
         
         Button reset = new Button("Reset Distances");
         reset.setLayoutX(550);
@@ -190,7 +197,7 @@ public class Main extends Application {
                 pane.getChildren().add(fwOutput);
                 pane.getChildren().add(flwsOut);
                 pane.getChildren().add(dfs);
-                pane.getChildren().add(timeComplexity);
+                //pane.getChildren().add(timeComplexity);
             }
         });
         
@@ -213,8 +220,8 @@ public class Main extends Application {
         pane.getChildren().add(fwOutput);
         pane.getChildren().add(flwsOut);
         pane.getChildren().add(dfs);
-        pane.getChildren().add(timeComplexity);
-        pane.getChildren().add(tComp);
+        //pane.getChildren().add(timeComplexity);
+        //pane.getChildren().add(tComp);
         
         Scene scene = new Scene(pane,700, 600);
         primaryStage.setTitle("draggin these buttons");
