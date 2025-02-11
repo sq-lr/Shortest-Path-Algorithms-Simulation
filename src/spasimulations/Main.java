@@ -149,7 +149,8 @@ public class Main extends Application {
                 {
                     Timeline timeline = new Timeline();
                     boolean vis[] = new boolean[graph.getSize()+1];
-                    graph.dfs(1, 0.0, 0, vis, timeline, inProgress);
+                    int d = graph.dfs(1, 0.0, 0, vis, timeline, inProgress);
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(d), event -> inProgress.setVisible(false)));
                     timeline.play();
                 }
             }

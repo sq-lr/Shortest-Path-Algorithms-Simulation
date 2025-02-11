@@ -322,11 +322,10 @@ public class Graph
                 delay += 500;
             }
         }
+        System.out.println(node);
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[node].noHighlight()));
         delay += 500;
         vis[node] = false;
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(false)));
-        timeline.play();
         return delay;
     }
 
