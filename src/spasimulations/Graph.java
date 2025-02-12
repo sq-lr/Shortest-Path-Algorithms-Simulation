@@ -147,9 +147,8 @@ public class Graph
      * runs Dijkstra algorithm with animation
      * @param dest
      * @param inProgress
-     * @return distance to destination
      */
-    public double dijkstra(String dest, Label inProgress)
+    public void dijkstra(Label inProgress)
     {
         Timeline timeline = new Timeline();
         double delay = 0;
@@ -195,17 +194,14 @@ public class Graph
         }
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(false)));
         timeline.play();
-        return numToNode[Integer.parseInt(dest)].getDist();
     }
     
     /**
      * runs Bellman-Ford algorithm with animation
      * @param dest
      * @param inProgress
-     * @return distance to destination
      */
-    public double bellmanFord(String dest, Label inProgress) {
-        int destNum = Integer.parseInt(dest);
+    public void bellmanFord(Label inProgress) {
         Timeline timeline = new Timeline();
         double delay = 0;
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(true)));
@@ -248,18 +244,15 @@ public class Graph
         }
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(false)));
         timeline.play();
-        return numToNode[destNum].getDist();
     }
 
     /**
      * runs Floyd Warshall algorithm with animation
      * @param dest
      * @param inProgress
-     * @return distance to destination
      */
-    public double floydWarshall(String dest, Label inProgress)
+    public void floydWarshall(Label inProgress)
     {
-        int destNum = Integer.parseInt(dest);
         int n = nodes.size();
         double arr[][] = new double[n+1][n+1];
         double inf = 10000;
@@ -339,7 +332,6 @@ public class Graph
         }
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(false)));
         timeline.play();
-        return arr[1][destNum];
     }
 
     /**
