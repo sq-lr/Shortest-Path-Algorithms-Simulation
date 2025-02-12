@@ -22,13 +22,16 @@ import javafx.util.Duration;
 
 
 /**
- * Write a description of JavaFX class Graph here.
+ * Stores the graph information and runs algorithm methods with animation
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Manya
+ * @author Luoxi
+ * @author Bridget
+ * Date: 2/11/25
  */
 public class Graph
 {
+    //private instance variables
     private ArrayList<Node> nodes;
     private ArrayList<Edge> edges;
     private ArrayList<ArrayList<Integer> > adjList;
@@ -46,6 +49,10 @@ public class Graph
         numToNode = new Node[maxNodes]; 
     }
 
+    /**
+     * adds a node to the Graph
+     * @param n
+     */
     public void addNode(Node n)
     {
         nodes.add(n);
@@ -53,11 +60,19 @@ public class Graph
         adjList.add(new ArrayList<Integer>());
     }
 
+    /**
+     * adds an edge to the Graph
+     * @param n1
+     * @param n2
+     * @param len
+     * @return
+     */
     public Edge addEdge(String n1, String n2, String len)
     {
         int num1 = Integer.parseInt(n1);
         int num2 = Integer.parseInt(n2);
         
+        // check if out of bounds
         if (num1 > nodes.size() || num2 > nodes.size())
         {
             return null;
@@ -69,11 +84,14 @@ public class Graph
         
         for (Edge edge : edges)
         {
+            // check if already in graph
             if (edge.equals(newEdge))
             {
                 return null;
             }
         }
+
+        // bidirectional edge
         adjList.get(num1).add(num2);
         adjList.get(num2).add(num1);
         edges.add(newEdge);
@@ -82,16 +100,27 @@ public class Graph
         return newEdge;
     }
     
+    /**
+     * accessor to nodes
+     * @return nodes
+     */
     public ArrayList<Node> getNodes()
     {
         return nodes;
     }
     
+    /**
+     * accessor to edges
+     * @return edges
+     */
     public ArrayList<Edge> getEdges()
     {
         return edges;
     }
     
+    /**
+     * resets all node distances
+     */
     public void resetDists()
     {
         for (Node n : nodes)
@@ -100,6 +129,9 @@ public class Graph
         }
     }
 
+    /**
+     * clears the Graph
+     */
     public void reset()
     {
         nodes.clear();
@@ -111,13 +143,19 @@ public class Graph
         Node.resetCounter();
     }
     
+    /**
+     * runs Dijkstra algorithm with animation
+     * @param dest
+     * @param inProgress
+     * @return distance to destination
+     */
     public double dijkstra(String dest, Label inProgress)
     {
         Timeline timeline = new Timeline();
         double delay = 0;
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(true)));
         
-        PriorityQueue<Pair<Double, Integer> > pq = new PriorityQueue<Pair<Double, Integer> >(Comparator.comparing(Pair::getKey)); 
+        PriorityQueue<Pair<Double, Integer> > pq = new PriorityQueue<Pair<Double, Integer> >(Comparator.comparing(Pair::getKey)); // min heap
         pq.add(new Pair<Double, Integer>(0.0, 1)); 
         boolean[] vis = new boolean[nodes.size()+1];
         while(!pq.isEmpty())
@@ -131,6 +169,7 @@ public class Graph
             delay += 500;
             vis[curNode] = true;
             ArrayList<Integer> children = adjList.get(curNode);
+            // process neighbors
             for(int c: children)
             {
                 Edge e = pairToEdge.get(new Pair<Integer, Integer>(curNode, c));
@@ -139,9 +178,6 @@ public class Graph
                 double newDis = curDis + e.getLen();
                 if(!vis[c] && newDis < numToNode[c].getDist())
                 {
-                    /*System.out.println(c);
-                    System.out.println(numToNode[c].getDist());
-                    System.out.println(newDis); */
                     timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> numToNode[c].yellowHighlight()));
                     delay += 500;
                     numToNode[c].setDist(newDis);
@@ -162,6 +198,12 @@ public class Graph
         return numToNode[Integer.parseInt(dest)].getDist();
     }
     
+    /**
+     * runs Bellman-Ford algorithm with animation
+     * @param dest
+     * @param inProgress
+     * @return distance to destination
+     */
     public double bellmanFord(String dest, Label inProgress) {
         int destNum = Integer.parseInt(dest);
         Timeline timeline = new Timeline();
@@ -182,20 +224,18 @@ public class Graph
     
                     double finalDist = (double) (start.getDist() + weight);
                     timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), Double.toString(finalDist), event -> end.setDistLabel(finalDist)));
-                    //delay += 500;
 
                     end.setDist(finalDist);
                     timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> end.noHighlight()));
                     delay += 500;
                 }
-
+                // bidirectional edge
                 if (end.getDist() + weight < start.getDist()) {
                     timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> start.greenHighlight()));
                     delay += 500;
     
                     double finalDist = (double) (end.getDist() + weight);
                     timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), Double.toString(finalDist), event -> start.setDistLabel(finalDist)));
-                    //delay += 500;
 
                     start.setDist(finalDist);
                     timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> start.noHighlight()));
@@ -211,6 +251,12 @@ public class Graph
         return numToNode[destNum].getDist();
     }
 
+    /**
+     * runs Floyd Warshall algorithm with animation
+     * @param dest
+     * @param inProgress
+     * @return distance to destination
+     */
     public double floydWarshall(String dest, Label inProgress)
     {
         int destNum = Integer.parseInt(dest);
@@ -220,6 +266,7 @@ public class Graph
         Timeline timeline = new Timeline();
         double delay=0;
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(true)));
+        // initialize arr
         for(int i = 1; i <= n; i++)
         {
             for(int j = 1; j <= n; j++)
@@ -295,9 +342,20 @@ public class Graph
         return arr[1][destNum];
     }
 
+    /**
+     * runs DFS algorithm with animation
+     * @param node
+     * @param dist
+     * @param delay
+     * @param vis
+     * @param timeline
+     * @param inProgress
+     * @return delay after processing current path
+     */
     public int dfs(int node, double dist, int delay, boolean[] vis, Timeline timeline, Label inProgress)
     {
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), event -> inProgress.setVisible(true)));
+        // check if node should be processed
         if(dist > numToNode[node].getDist())
         {
             return delay;
@@ -329,6 +387,10 @@ public class Graph
         return delay;
     }
 
+    /**
+     * accessor to size of nodes
+     * @return nodes.size()
+     */
     public int getSize()
     {
         return nodes.size();
